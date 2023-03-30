@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    command: ./wait-for-it.sh mysql:3306 -- ./docker-entrypoint.sh
+    ports:
+      - 8000:8000
+    depends_on:
+      - redis
+      - mysql
+    restart: on-failure
+    environment:
+      - ORACLE_PORT=port
+      - ORACLE_USER=user
+      - ORACLE_HOST=host
+      - ORACLE_PASSWORD=password
+      - ORACLE_SID=sid
+      # 生产环境加上注释的内容
+      # - SECRET_KEY=<secret_key>
+      # - DJANGO_SETTINGS_MODULE=storefront.settings.prod
+
+    volumes:
+      - .:/app
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+  mysql:
+    image: mysql:8.0
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      - MYSQL_DATABASE=<database_name>
+      - MYSQL_ROOT_PASSWORD=<password>
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - 6379:6379
+    restart: always
+    volumes:
+      - redisdata:/data
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+volumes:
+  mysqldata:
+  redisdata:
