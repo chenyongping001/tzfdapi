@@ -1,5 +1,7 @@
 *.pyc
 /media/
 /static/
+/.vscode/
 general.log
 docker-compose.yml
+db.sqlite3
